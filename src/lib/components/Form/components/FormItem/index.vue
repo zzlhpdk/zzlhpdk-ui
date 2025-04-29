@@ -18,6 +18,7 @@
         :show-word-limit="item.showWordLimit || false"
         :show-password="item.showPassword || false"
         :disabled="setDisabled(item)"
+        :type="item.inputType || 'text'"
         v-model.trim="form[key]"
         :maxlength="item.maxlength || 30"
         :placeholder="setPlaceholder(item, '输入')"
@@ -62,6 +63,30 @@
           :value="option.value"
           :disabled="option.disabled || false" />
       </el-select>
+    </el-form-item>
+    <!-- 树形 -->
+    <el-form-item
+      v-if="item.type === 'treeSelect' && !item.remove"
+      :prop="key"
+      :label="item.label"
+      :label-width="item.labelWidth || formConfig.labelWidth || '120px'"
+      :rules="setRule(item, '选择')">
+      <el-tree-select
+        :render-after-expand="false"
+        v-model="form[key]"
+        :data="item.options || []"
+        :placeholder="setPlaceholder(item, '选择')"
+        :show-checkbox="item.showCheckbox || true"
+        :check-strictly="item.checkStrictly || false"
+        :disabled="setDisabled(item)"
+        :multiple="item.multiple || false"
+        :props="item.props || {}"
+        :filterable="item.filterable || false"
+        :filter-node-method="item.filterNodeMethod || null"
+        :expand-on-click-node="item.expandOnClickNode || false"
+        :default-expand-all="item.defaultExpandAll || false"
+        :default-expanded-keys="item.defaultExpandedKeys || []"
+        @node-click="item.nodeClick" />
     </el-form-item>
     <!-- 日期/时间选择 -->
     <el-form-item
@@ -147,12 +172,69 @@
 									}
 								" />
     </el-form-item>
+    <!-- 单选框 -->
+    <el-form-item
+      v-if="item.type === 'radio' && !item.remove"
+      :prop="key"
+      :label="item.label"
+      :label-width="item.labelWidth || formConfig.labelWidth || '120px'"
+      :rules="setRule(item, '选择')">
+      <el-radio-group
+        v-model="form[key]"
+        :disabled="setDisabled(item)"
+        :placeholder="setPlaceholder(item, '选择')">
+        <el-radio
+          :key="radio.value"
+          v-for="radio in item.options"
+          :value="radio.value"
+          >{{ radio.label }}</el-radio
+        >
+      </el-radio-group>
+    </el-form-item>
+    <!-- 文件上传 -->
+    <!-- <el-form-item
+      v-if="item.type === 'file' && !item.remove"
+      :prop="key"
+      :label="item.label"
+      :label-width="item.labelWidth || formConfig.labelWidth || '120px'"
+      :rules="setRule(item, '上传')"
+    >
+      <zzUpload
+        :idDelete="item.idDelete"
+        :fileType="item.fileType"
+        :fileSize="item.fileSize"
+        :fileLimit="item.fileLimit || 20"
+        :type="item.approvalType || formConfig.type"
+        v-model="form[key]"
+      />
+    </el-form-item> -->
+    <!-- 富文本 -->
+    <!-- <el-form-item
+      v-if="item.type === 'editor' && !item.remove"
+      :prop="key"
+      :label="item.label"
+      :label-width="item.labelWidth || formConfig.labelWidth || '120px'"
+      :rules="setRule(item, '输入')"
+    >
+      <Editor
+        :disable="setDisabled(item)"
+        :required="item.required"
+        v-model:get-html="form[key]"
+        :max-length="2000"
+        :placeholder="setPlaceholder(item, '输入')"
+      ></Editor>
+    </el-form-item> -->
   </span>
   <!-- 插槽，自定义内容-->
-  <slot name="custom"></slot>
+  <span>
+    <slot name="custom"></slot>
+  </span>
 </template>
 <script setup lang="ts">
 import { defineProps, toRefs } from 'vue';
+// import zzUpload from "/@/components/zzUpload/index.vue";
+// import Editor from "/@/components/Editor/index.vue";
+
 const props = defineProps({
   formFields: {
     default: () => {},
@@ -255,4 +337,6 @@ const setChange = (item: any, e: Event) => {
   return null;
 };
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+
+</style>

@@ -1,7 +1,5 @@
 <template>
   <div style="width: 100%">
-    <!--  表格头部组件 -->
-    <slot name="tableHeader"></slot>
     <!-- 查询组件 -->
     <zzForm
       v-if="tableConfig.showSearch"
@@ -9,8 +7,7 @@
       :formFields="searchFields"
       :formConfig="searchConfig">
       <template #custom>
-        <span
-          style="display: inline-block; margin-left: auto; margin-bottom: 20px">
+        <span style="display: inline-block; margin-left: 16px">
           <el-button
             :icon="Search"
             type="primary"
@@ -28,10 +25,11 @@
         </span>
       </template>
     </zzForm>
+    <!--  表格头部组件 -->
+    <slot name="tableHeader"></slot>
     <!-- 表格组件 -->
     <el-table
       ref="tableRef"
-      class="mt-5"
       :cell-style="{ textAlign: 'center' }"
       :header-cell-style="{
         textAlign: 'center',
@@ -39,7 +37,7 @@
         color: 'var(--el-text-color-primary)'
       }"
       :data="tableData"
-      style="width: 100%"
+      style="width: 100%; margin-top: 20px"
       v-loading="loading"
       :row-key="tableConfig.rowKey"
       :highlight-current-row="tableConfig.singleSelect"
@@ -50,7 +48,12 @@
         :reserve-selection="tableConfig.reserveSelection"
         type="selection"
         width="55" />
-      <el-table-column fixed="left" type="index" label="序号" width="80" />
+      <el-table-column
+        fixed="left"
+        type="index"
+        :index="indexMethod"
+        label="序号"
+        width="80" />
       <template v-for="item in tableColumns">
         <el-table-column
           v-if="!item.slot"
@@ -133,7 +136,7 @@ const props = defineProps({
       defaultSearch: {}, //搜索默认
       labelWidth: '120px',
       type: 'search',
-      labelPosition: 'left'
+      labelPosition: 'right'
     }),
     type: Object
   }
@@ -144,6 +147,7 @@ const total = ref(0);
 const pageInfo = ref({ current: 1, size: 10 });
 const loading = ref(false);
 const tableData = ref([]);
+const allResponse = ref({});
 onMounted(() => {
   getTableData();
 });
@@ -161,11 +165,21 @@ const getTableData = async (searchFormData?: any) => {
     .then((response: any) => {
       tableData.value = response?.records;
       total.value = Number(response.total);
+      allResponse.value = response;
     })
     .finally(() => {
       loading.value = false;
+      //暴露所有查询参数
+      emits('sendSearchInfo', {
+        total: total.value,
+        pageInfo: pageInfo.value,
+        searchFormData,
+        loading: loading.value,
+        allResponse: allResponse.value
+      });
     });
 };
+const emits = defineEmits(['selectionChange', 'sendSearchInfo']);
 // 查询
 const handleSearch = () => {
   const searchFormData = zzFormRef.value.form;
@@ -190,15 +204,19 @@ const sizeChange = (size: number) => {
   pageInfo.value.size = size;
   handleSearch();
 };
-const emits = defineEmits(['selectionChange']);
 // 多选
 const selectionChange = (selection: any) => {
   emits('selectionChange', selection);
 };
+//设置序号
+const indexMethod = (index: number) => {
+  return (pageInfo.value.current - 1) * pageInfo.value.size + index + 1;
+};
 defineExpose({
   getTableData,
   tableData,
-  selectionChange
+  selectionChange,
+  handleRest
 });
 </script>
 <style scoped lang="scss"></style>

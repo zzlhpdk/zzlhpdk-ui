@@ -2,7 +2,8 @@
   <el-form
     :label-position="formConfig.labelPosition"
     layout="inline"
-    :class="['form', formConfig.type === 'view' ? 'no-style' : '']"
+    class="form"
+    :style="formConfig.style"
     ref="formRef"
     :label-width="formConfig.labelWidth || '120px'"
     :model="form">
@@ -15,15 +16,8 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  defineOptions,
-  getCurrentInstance,
-  onMounted,
-  ref,
-  toRefs,
-  watch
-} from 'vue';
 import FormItem from './components/FormItem/index.vue';
+import { getCurrentInstance, onMounted, ref, toRefs, watch } from 'vue';
 defineOptions({
   name: 'zz-form'
 });
@@ -34,7 +28,14 @@ const props = defineProps({
       return {
         labelWidth: '120px',
         type: 'submit',
-        labelPosition: 'right'
+        labelPosition: 'right',
+        style: {
+          width: '100%',
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'flex-start',
+          alignItems: 'center'
+        }
       };
     }
   },
@@ -53,13 +54,6 @@ const init = (data: any) => {
       form.value[key] = data[key].defaultValue;
     });
 };
-watch(
-  () => formFields.value,
-  (newVal: any) => {
-    init(newVal);
-  },
-  { immediate: true, deep: true }
-);
 
 // ref提升,formRef方法暴露到实力上。
 const formRef = ref<any>(null);
@@ -72,6 +66,7 @@ const refUp = () => {
 };
 onMounted(() => {
   refUp();
+  init(formFields.value);
 });
 //表单校验
 const check = async () => {
@@ -94,10 +89,10 @@ const submit = () => {
     if (form.value[key] === null || form.value[key] === undefined) {
       submitData[key] = '';
     }
-    //数字处理
-    if (Array.isArray(form.value[key])) {
-      submitData[key] = form.value[key].join(',');
-    }
+    // //数字处理
+    // if (Array.isArray(form.value[key])) {
+    //   submitData[key] = form.value[key].join(',');
+    // }
   }
   return submitData;
 };
