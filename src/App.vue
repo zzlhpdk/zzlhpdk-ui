@@ -5,10 +5,10 @@
   </el-tabs>
 </template>
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import type { TabsPaneContext } from 'element-plus';
-import FormPage from './views/FormPage/index.vue';
-import TablePage from './views/TablePage/index.vue';
+import FormPage from '@/views/FormPage/index.vue';
+import TablePage from '@/views/TablePage/index.vue';
 
 const activeName = ref('first');
 const handleClick = (tab: TabsPaneContext, event: Event) => {

@@ -7,7 +7,7 @@
       :formFields="searchFields"
       :formConfig="searchConfig">
       <template #custom>
-        <span style="display: inline-block; margin-left: 16px">
+        <span style="display: inline-block; margin-left: 16px; height: 50px">
           <el-button
             :icon="Search"
             type="primary"

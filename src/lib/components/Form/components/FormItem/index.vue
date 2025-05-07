@@ -1,12 +1,14 @@
 <template>
   <span
     :style="{
-      width: '430px',
+      //不展示的时候，宽度为0
+      width:
+        item.remove || item.hidden ? 0 : formConfig.formItemWidth || '430px',
       ...item.style
     }"
     v-for="(item, key) of formFields"
     :key="key"
-    v-show="!item.hidden">
+    v-show="!item.hidden || !item.remove">
     <!-- 输入框 -->
     <el-form-item
       v-if="item.type === 'input' && !item.remove"
@@ -231,7 +233,8 @@
   </span>
 </template>
 <script setup lang="ts">
-import { defineProps, toRefs } from 'vue';
+import { defineProps, toRefs, computed } from 'vue';
+import useVModel from '../../hooks/useVmodel';
 // import zzUpload from "/@/components/zzUpload/index.vue";
 // import Editor from "/@/components/Editor/index.vue";
 
@@ -245,19 +248,22 @@ const props = defineProps({
     default: () => {
       return {
         labelWidth: '120px',
-        type: 'submit'
+        type: 'submit',
+        formItemWidth: '430px'
       };
     }
   },
-  form: {
+  modelValue: {
     type: Object,
     default: () => {
       return {};
     }
   }
 });
+const { formFields, formConfig } = toRefs(props);
 
-const { formFields, formConfig, form } = toRefs(props);
+const emit = defineEmits(['update:modelValue']);
+const form = useVModel(props, 'modelValue', emit);
 
 const setRule = (item: any, desc: string) => {
   if (formConfig.value.type === 'view') return [];
@@ -337,6 +343,3 @@ const setChange = (item: any, e: Event) => {
   return null;
 };
 </script>
-<style scoped lang="scss">
-
-</style>

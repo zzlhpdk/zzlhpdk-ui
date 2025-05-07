@@ -12,6 +12,11 @@ export default defineConfig({
       }
     }
   },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src') // 设置 `@` 指向 `src` 目录
+    }
+  },
   build: {
     lib: {
       entry: path.resolve(__dirname, './src/lib/index.js'), //指定组件编译入口文件

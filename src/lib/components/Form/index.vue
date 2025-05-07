@@ -7,7 +7,7 @@
     ref="formRef"
     :label-width="formConfig.labelWidth || '120px'"
     :model="form">
-    <FormItem :formConfig="formConfig" :formFields="formFields" :form="form">
+    <FormItem :formConfig="formConfig" :formFields="formFields" v-model="form">
       <template #custom>
         <slot name="custom"></slot>
       </template>
@@ -16,8 +16,10 @@
 </template>
 
 <script lang="ts" setup>
+import { getCurrentInstance, onMounted, ref, toRefs } from 'vue';
+import useVModel from './hooks/useVmodel';
 import FormItem from './components/FormItem/index.vue';
-import { getCurrentInstance, onMounted, ref, toRefs, watch } from 'vue';
+
 defineOptions({
   name: 'zz-form'
 });
@@ -42,18 +44,15 @@ const props = defineProps({
   formFields: {
     default: () => {},
     type: Object
+  },
+  modelValue: {
+    default: () => {},
+    type: Object
   }
 });
 const { formFields, formConfig } = toRefs(props);
-
-// 初始化表单
-const form = ref<any>({});
-const init = (data: any) => {
-  if (data && Object.keys(data).length > 0)
-    Object.keys(data).forEach(key => {
-      form.value[key] = data[key].defaultValue;
-    });
-};
+const emit = defineEmits(['update:modelValue']);
+const form = useVModel(props, 'modelValue', emit);
 
 // ref提升,formRef方法暴露到实力上。
 const formRef = ref<any>(null);
@@ -66,7 +65,6 @@ const refUp = () => {
 };
 onMounted(() => {
   refUp();
-  init(formFields.value);
 });
 //表单校验
 const check = async () => {
@@ -80,23 +78,8 @@ const check = async () => {
     return valid;
   });
 };
-//表单提交
-const submit = () => {
-  let submitData: any = {};
-  for (const key in form.value) {
-    submitData[key] = form.value[key];
-    // 空值处理
-    if (form.value[key] === null || form.value[key] === undefined) {
-      submitData[key] = '';
-    }
-    // //数字处理
-    // if (Array.isArray(form.value[key])) {
-    //   submitData[key] = form.value[key].join(',');
-    // }
-  }
-  return submitData;
-};
-defineExpose({ form, check, submit });
+
+defineExpose({ check });
 </script>
 <style scoped lang="scss">
 .form {
