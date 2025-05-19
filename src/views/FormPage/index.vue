@@ -6,14 +6,10 @@
     ref="formRef">
   </zz-form>
   <div class="button">
-    <el-button type="primary" @click="initForm">表单回显</el-button>
+    <el-button type="primary" @click="handleEhco">表单回显</el-button>
     <el-button type="primary" @click="handleSubmit">提交</el-button>
-    <el-button type="primary" @click="handleAdd">新增专业</el-button>
+    <el-button type="primary" @click="handleAdd">新增项</el-button>
   </div>
-  <el-alert
-    title="模拟更新：性别选择男，会更新籍贯选项"
-    :show-icon="false"
-    :center="true" />
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
@@ -127,17 +123,17 @@ const formRef = ref();
 
 //提交
 const handleSubmit = async () => {
-  const check = await formRef.value?.check();
-  if (check) {
+  // const check = await formRef.value?.check();
+  // if (check) {
     console.log(formData.value);
-  }
+  // }
 };
 //性别改变
 const sexChange = (value: any) => {
   formFields.value.birthday.remove = value === 1 ? true : false;
 };
 //初始化表单
-const initForm = () => {
+const handleEhco = () => {
   setTimeout(() => {
     const data = {
       name: '张三',
@@ -153,7 +149,7 @@ const initForm = () => {
       address: 'city',
       remark: '1212'
     };
-    formRef.value.form = data;
+    formData.value = data;
   }, 100);
 };
 //新增专业

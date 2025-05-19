@@ -5,6 +5,9 @@ import path from 'path';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  configureWebpack: {
+    devtool: 'source-map' // 必须为完整 SourceMap
+  },
   css: {
     preprocessorOptions: {
       scss: {

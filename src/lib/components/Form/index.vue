@@ -17,12 +17,9 @@
 
 <script lang="ts" setup>
 import { getCurrentInstance, onMounted, ref, toRefs } from 'vue';
-import useVModel from './hooks/useVmodel';
+import useVModel from '../../hooks/useVModel';
 import FormItem from './components/FormItem/index.vue';
 
-defineOptions({
-  name: 'zz-form'
-});
 const props = defineProps({
   formConfig: {
     type: Object,

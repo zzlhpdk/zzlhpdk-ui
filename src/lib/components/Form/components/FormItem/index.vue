@@ -234,7 +234,7 @@
 </template>
 <script setup lang="ts">
 import { defineProps, toRefs, computed } from 'vue';
-import useVModel from '../../hooks/useVmodel';
+import useVModel from '../../../../hooks/useVmodel';
 // import zzUpload from "/@/components/zzUpload/index.vue";
 // import Editor from "/@/components/Editor/index.vue";
 
