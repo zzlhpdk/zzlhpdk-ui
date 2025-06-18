@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { getCurrentInstance, onMounted, ref, toRefs } from 'vue';
-import useVModel from '../../hooks/useVModel';
+import useVmodel from '../../hooks/useVmodel';
 import FormItem from './components/FormItem/index.vue';
 
 const props = defineProps({
@@ -49,7 +49,7 @@ const props = defineProps({
 });
 const { formFields, formConfig } = toRefs(props);
 const emit = defineEmits(['update:modelValue']);
-const form = useVModel(props, 'modelValue', emit);
+const form = useVmodel(props, 'modelValue', emit);
 
 // ref提升,formRef方法暴露到实力上。
 const formRef = ref<any>(null);

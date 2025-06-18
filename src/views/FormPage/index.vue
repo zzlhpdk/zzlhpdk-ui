@@ -123,10 +123,10 @@ const formRef = ref();
 
 //提交
 const handleSubmit = async () => {
-  // const check = await formRef.value?.check();
-  // if (check) {
+  const check = await formRef.value?.check();
+  if (check) {
     console.log(formData.value);
-  // }
+  }
 };
 //性别改变
 const sexChange = (value: any) => {
