@@ -4,6 +4,7 @@
     <zzForm
       v-if="tableConfig.showSearch"
       ref="zzFormRef"
+      v-model="searchFormData"
       :formFields="searchFields"
       :formConfig="searchConfig">
       <template #custom>
@@ -62,10 +63,9 @@
           :width="item.width"
           :fixed="item.fixed ? item.fixed : false"
           :key="item.prop"
-          show-overflow-tooltip
-          :formatter="item.formatter ? (row: any, column: any, )=>item.formatter(row,column) : null">
+          show-overflow-tooltip>
           <template #default="{ row }">
-            <span :style="item.style || null">{{ row[item.prop] }}</span>
+            <span :style="item.style || null">{{ showLable(row, item) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -75,8 +75,7 @@
           :width="item.width"
           :fixed="item.fixed ? item.fixed : false"
           :key="item.prop + 1"
-          show-overflow-tooltip
-          :formatter="item.formatter ? (row: any, column: any, )=>item.formatter(row,column) : null">
+          show-overflow-tooltip>
           <template v-slot="scope">
             <slot
               :name="item.slot"
@@ -103,6 +102,7 @@
 import zzForm from '../Form/index.vue';
 import { ref, onMounted, toRefs } from 'vue';
 import { Search, RefreshLeft } from '@element-plus/icons-vue';
+
 defineOptions({
   name: 'zz-table'
 });
@@ -143,6 +143,7 @@ const props = defineProps({
 });
 const { tableColumns, tableConfig, searchFields, searchConfig } = toRefs(props);
 
+const searchFormData = ref();
 const total = ref(0);
 const pageInfo = ref({ current: 1, size: 10 });
 const loading = ref(false);
@@ -153,18 +154,18 @@ onMounted(() => {
 });
 // 获取分页数据
 const zzFormRef = ref();
-const getTableData = async (searchFormData?: any) => {
+const getTableData = async () => {
   if (!tableConfig.value.pageApi) return;
   loading.value = true;
   tableConfig.value
     .pageApi({
       ...searchConfig.value.defaultSearch,
       ...pageInfo.value,
-      ...searchFormData
+      ...searchFormData.value
     })
     .then((response: any) => {
-      tableData.value = response?.records;
-      total.value = Number(response.total);
+      tableData.value = response?.records || response?.data?.records || [];
+      total.value = Number(response?.total ?? response?.data?.total ?? 0);
       allResponse.value = response;
     })
     .finally(() => {
@@ -173,7 +174,7 @@ const getTableData = async (searchFormData?: any) => {
       emits('sendSearchInfo', {
         total: total.value,
         pageInfo: pageInfo.value,
-        searchFormData,
+        searchFormData: searchFormData.value,
         loading: loading.value,
         allResponse: allResponse.value
       });
@@ -182,12 +183,11 @@ const getTableData = async (searchFormData?: any) => {
 const emits = defineEmits(['selectionChange', 'sendSearchInfo']);
 // 查询
 const handleSearch = () => {
-  const searchFormData = zzFormRef.value.form;
-  getTableData(searchFormData);
+  getTableData();
 };
 // 重置
 const handleRest = () => {
-  zzFormRef.value.resetFields();
+  searchFormData.value = {};
   pageInfo.value = {
     current: 1,
     size: 10
@@ -212,6 +212,17 @@ const selectionChange = (selection: any) => {
 const indexMethod = (index: number) => {
   return (pageInfo.value.current - 1) * pageInfo.value.size + index + 1;
 };
+//展示中文
+const showLable = (row: any, item: any) => {
+  if (item.options) {
+    const thisOption = item.options.find(
+      (i: any) => i.value === row[item.prop]
+    );
+    if (thisOption) return thisOption?.label ?? '';
+  }
+  return row[item.prop];
+};
+
 defineExpose({
   getTableData,
   tableData,

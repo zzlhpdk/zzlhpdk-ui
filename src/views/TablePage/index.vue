@@ -2,9 +2,14 @@
   <zz-table
     :searchFields="searchFields"
     :searchConfig="searchConfig"
+    :searchformData="searchformData"
     :tableColumns="tableColumns"
     :tableConfig="tableConfig"
-    ref="tableRef"></zz-table>
+    ref="tableRef">
+    <template #ageSlot="{ row }">
+      <el-tag>{{ row.age }}</el-tag>
+    </template>
+  </zz-table>
 </template>
 <script setup lang="ts">
 import { ref, computed } from 'vue';
@@ -19,6 +24,8 @@ const searchConfig = computed(() => {
     }
   };
 });
+
+const searchformData = ref({});
 const searchFields = {
   name: {
     type: 'input',
@@ -51,11 +58,19 @@ const tableConfig = ref({
   multiple: true,
   reserveSelection: true
 });
-const tableColumns = [
+const tableColumns = ref([
   { prop: 'id', label: '编号' },
   { prop: 'name', label: '姓名' },
-  { prop: 'age', label: '年龄' },
-  { prop: 'work', label: '职业' }
-];
+  { prop: 'age', label: '年龄', slot: 'ageSlot' },
+  { prop: 'work', label: '职业' },
+  {
+    prop: 'sex',
+    label: '性别',
+    options: [
+      { label: '男', value: 1 },
+      { label: '女', value: 2 }
+    ]
+  }
+]);
 </script>
 <style scoped lang="scss"></style>

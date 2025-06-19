@@ -1,7 +1,7 @@
 <template>
   <el-form
     :label-position="formConfig.labelPosition"
-    layout="inline"
+    :inline="formConfig.inline ?? true"
     class="form"
     :style="formConfig.style"
     ref="formRef"
@@ -28,6 +28,7 @@ const props = defineProps({
         labelWidth: '120px',
         type: 'submit',
         labelPosition: 'right',
+        inline: true,
         style: {
           width: '100%',
           display: 'flex',
