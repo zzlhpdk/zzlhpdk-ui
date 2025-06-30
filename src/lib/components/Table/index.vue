@@ -121,7 +121,8 @@ const props = defineProps({
       singleSelect: false, //是否单选
       pageApi: () => {}, //请求接口
       hiddenPageInfo: false, //是否隐藏分页信息
-      reserveSelection: false //是否保留已选择项
+      reserveSelection: false, //是否保留已选择项
+      beforeRequest: null // 新增请求拦截器
     }),
     type: Object
   },
@@ -152,17 +153,24 @@ const allResponse = ref({});
 onMounted(() => {
   getTableData();
 });
+//
+
 // 获取分页数据
 const zzFormRef = ref();
 const getTableData = async () => {
   if (!tableConfig.value.pageApi) return;
   loading.value = true;
+  let params: any = {
+    ...searchConfig.value.defaultSearch,
+    ...pageInfo.value,
+    ...searchFormData.value
+  };
+  // 请求拦截逻辑
+  if (typeof tableConfig.value.beforeRequest === 'function') {
+    params = await tableConfig.value.beforeRequest(params);
+  }
   tableConfig.value
-    .pageApi({
-      ...searchConfig.value.defaultSearch,
-      ...pageInfo.value,
-      ...searchFormData.value
-    })
+    .pageApi(params)
     .then((response: any) => {
       tableData.value = response?.records || response?.data?.records || [];
       total.value = Number(response?.total ?? response?.data?.total ?? 0);
@@ -171,16 +179,13 @@ const getTableData = async () => {
     .finally(() => {
       loading.value = false;
       //暴露所有查询参数
-      emits('sendSearchInfo', {
+      emits('sendResultInfo', {
         total: total.value,
-        pageInfo: pageInfo.value,
-        searchFormData: searchFormData.value,
-        loading: loading.value,
         allResponse: allResponse.value
       });
     });
 };
-const emits = defineEmits(['selectionChange', 'sendSearchInfo']);
+const emits = defineEmits(['selectionChange', 'sendResultInfo']);
 // 查询
 const handleSearch = () => {
   getTableData();

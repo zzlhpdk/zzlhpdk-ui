@@ -1,8 +1,7 @@
 <template>
   <el-form
-    :label-position="formConfig.labelPosition"
+    :label-position="'left'"
     :inline="formConfig.inline ?? true"
-    class="form"
     :style="formConfig.style"
     ref="formRef"
     :label-width="formConfig.labelWidth || '120px'"
@@ -30,11 +29,7 @@ const props = defineProps({
         labelPosition: 'right',
         inline: true,
         style: {
-          width: '100%',
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'flex-start',
-          alignItems: 'center'
+          width: '100%'
         }
       };
     }
@@ -79,12 +74,4 @@ const check = async () => {
 
 defineExpose({ check });
 </script>
-<style scoped lang="scss">
-.form {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: center;
-}
-</style>
+<style scoped lang="scss"></style>
