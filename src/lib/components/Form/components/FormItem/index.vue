@@ -9,7 +9,14 @@
       :label-width="item.labelWidth || formConfig.labelWidth || '120px'"
       :rules="setRule(item, '输入')"
       :label-position="formConfig.labelPosition"
-      :style="item.style || fieldStyle">
+      :style="
+        item.style
+          ? {
+              ...fieldStyle,
+              ...item.style
+            }
+          : fieldStyle
+      ">
       <template v-if="item.type === 'input'">
         <el-input
           :show-word-limit="item.showWordLimit || false"
@@ -86,7 +93,7 @@
           :disabled="setDisabled(item)"
           v-model="form[key]"
           :type="item.picker || 'date'"
-          :format="item.showFormat || 'YYYY/MM/DD HH:mm:ss'"
+          :format="item.valueFormat || item.showFormat || 'YYYY-MM-DD HH:mm:ss'"
           :placeholder="setPlaceholder(item, '选择')"
           :value-format="item.valueFormat || 'YYYY-MM-DD HH:mm:ss'"
           style="width: 100%"
@@ -153,6 +160,9 @@
           >
         </el-radio-group>
       </template>
+      <template v-if="item.type === 'custom'">
+        <slot name="custom"></slot>
+      </template>
     </el-form-item>
     <!-- 文件上传 -->
     <!-- <el-form-item
@@ -188,9 +198,6 @@
       ></Editor>
     </el-form-item> -->
     <!-- 插槽，自定义内容-->
-    <span>
-      <slot name="custom"></slot>
-    </span>
   </template>
 </template>
 <script setup lang="ts">
@@ -210,11 +217,7 @@ const props = defineProps({
   formConfig: {
     type: Object,
     default: () => {
-      return {
-        labelWidth: '120px',
-        type: 'submit',
-        labelPosition: 'right'
-      };
+      return {};
     }
   },
   modelValue: {
