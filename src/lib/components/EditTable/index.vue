@@ -63,8 +63,33 @@
                 :maxlength="item.maxlength || 30"
                 :placeholder="setPlaceholder(item, '输入')" />
             </el-form-item>
+            <el-form-item
+              v-if="item.type === 'date'"
+              :prop="`tableData[${row.index}].${key}`"
+              :rules="setRule(item, '选择')"
+              :placeholder="setPlaceholder(item, '选择')">
+              <el-date-picker
+                :key="key"
+                :disabled="setDisabled(item)"
+                v-model="row[key]"
+                :type="item.picker || 'date'"
+                :format="item.showFormat || 'YYYY-MM-DD HH:mm:ss'"
+                :placeholder="setPlaceholder(item, '选择')"
+                :value-format="
+                  item.valueFormat || item.showFormat || 'YYYY-MM-DD HH:mm:ss'
+                "
+                style="width: 100%"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                :disabled-date="item.disabledDate || null"
+                :picker-options="item.pickerOptions || ''"
+                :shortcuts="item.shortcuts || []"
+                :default-time="item.defaultTime"
+                range-separator="/" />
+            </el-form-item>
           </template>
         </el-table-column>
+
         <el-table-column fixed="right" label="操作" width="120px">
           <template #default="scope">
             <div class="buttons">

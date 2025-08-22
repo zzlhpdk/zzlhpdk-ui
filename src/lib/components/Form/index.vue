@@ -1,6 +1,6 @@
 <template>
   <el-form
-    :label-position="'left'"
+    :label-position="mergeFormConfig.labelPosition ?? 'left'"
     :inline="mergeFormConfig.inline ?? true"
     :style="mergeFormConfig.style"
     ref="formRef"
@@ -19,7 +19,6 @@
 
 <script lang="ts" setup>
 import { getCurrentInstance, onMounted, ref, toRefs, computed } from 'vue';
-import useVmodel from '../../hooks/useVmodel';
 import FormItem from './components/FormItem/index.vue';
 
 // 组件属性定义
@@ -33,11 +32,6 @@ const props = defineProps({
   formFields: {
     default: () => ({}),
     type: Object
-  },
-  // 表单数据模型（v-model绑定）
-  modelValue: {
-    default: () => ({}),
-    type: Object
   }
 });
 
@@ -48,7 +42,7 @@ const { formFields, formConfig } = toRefs(props);
 const mergeFormConfig = computed(() => ({
   labelWidth: '120px', // 标签宽度
   type: 'submit', // 表单类型（submit/view/search）
-  labelPosition: 'right', // 标签对齐方式
+  labelPosition: 'left', // 标签对齐方式
   inline: true, // 是否行内布局
   ...formConfig.value, // 合并传入的表单字段配置
   style: {
@@ -58,8 +52,10 @@ const mergeFormConfig = computed(() => ({
 }));
 
 // 表单数据双向绑定
-const emit = defineEmits(['update:modelValue']);
-const form = useVmodel(props, 'modelValue', emit);
+const form = defineModel('modelValue', {
+  default: () => ({}),
+  type: Object
+});
 
 // 表单引用和实例方法暴露
 const formRef = ref<any>(null);

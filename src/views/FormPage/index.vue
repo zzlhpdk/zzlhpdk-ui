@@ -49,7 +49,8 @@ const formFields = ref({
     type: 'select',
     label: '性别',
     change: value => sexChange(value),
-    options: []
+    options: [],
+    required: true
   },
   area: {
     type: 'treeSelect',

@@ -2,7 +2,7 @@
   <zz-table
     :searchFields="searchFields"
     :searchConfig="searchConfig"
-    :searchformData="searchformData"
+    v-model="searchformData"
     :tableColumns="tableColumns"
     :tableConfig="tableConfig"
     ref="tableRef">

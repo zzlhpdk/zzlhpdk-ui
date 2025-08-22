@@ -120,13 +120,14 @@
 </template>
 <script setup lang="ts">
 import zzForm from '../Form/index.vue';
-import { ref, onMounted, toRefs, getCurrentInstance, nextTick } from 'vue';
+import { ref, onMounted, toRefs, getCurrentInstance } from 'vue';
 import {
   Search,
   RefreshLeft,
   ArrowUp,
   ArrowDown
 } from '@element-plus/icons-vue';
+import { deepClone } from '../../utils/func';
 
 defineOptions({
   name: 'zz-table'
@@ -166,11 +167,18 @@ const props = defineProps({
       type: 'search'
     }),
     type: Object
+  },
+  modelValue: {
+    default: () => ({}),
+    type: Object
   }
 });
 const { tableColumns, tableConfig, searchFields, searchConfig } = toRefs(props);
 
-const searchFormData = ref();
+const searchFormData = defineModel('modelValue', {
+  default: () => ({}),
+  type: Object
+});
 const total = ref(0);
 const pageInfo = ref({ current: 1, size: 10 });
 const loading = ref(false);
@@ -190,31 +198,6 @@ onMounted(() => {
   getTableData();
   refUp();
 });
-
-//深拷贝
-const deepClone = (obj, hash = new WeakMap()) => {
-  // 处理基本类型和null
-  if (obj === null || typeof obj !== 'object') return obj;
-  // 处理特殊对象类型
-  switch (Object.prototype.toString.call(obj)) {
-    case '[object Date]':
-      return new Date(obj);
-    case '[object RegExp]':
-      return new RegExp(obj);
-    case '[object Array]':
-      return obj.map(item => deepClone(item, hash));
-  }
-  // 处理循环引用
-  if (hash.has(obj)) return hash.get(obj);
-  // 创建新对象并保持原型链
-  const cloneObj = Object.create(Object.getPrototypeOf(obj));
-  hash.set(obj, cloneObj);
-  // 递归拷贝属性
-  for (const key of Reflect.ownKeys(obj)) {
-    cloneObj[key] = deepClone(obj[key], hash);
-  }
-  return cloneObj;
-};
 
 // 获取分页数据
 const getTableData = async () => {
@@ -261,7 +244,9 @@ const handleSearch = () => {
 };
 // 重置
 const handleRest = () => {
-  searchFormData.value = {};
+  Object.keys(searchFormData.value).forEach(key => {
+    delete searchFormData.value[key];
+  });
   pageInfo.value = {
     current: 1,
     size: 10

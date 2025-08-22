@@ -201,8 +201,7 @@
   </template>
 </template>
 <script setup lang="ts">
-import { defineProps, toRefs, computed } from 'vue';
-import useVModel from '../../../../hooks/useVmodel';
+import { defineProps, toRefs } from 'vue';
 // import zzUpload from "/@/components/zzUpload/index.vue";
 // import Editor from "/@/components/Editor/index.vue";
 
@@ -219,18 +218,13 @@ const props = defineProps({
     default: () => {
       return {};
     }
-  },
-  modelValue: {
-    type: Object,
-    default: () => {
-      return {};
-    }
   }
 });
 const { formFields, formConfig } = toRefs(props);
-
-const emit = defineEmits(['update:modelValue']);
-const form = useVModel(props, 'modelValue', emit);
+const form = defineModel('modelValue', {
+  default: () => ({}),
+  type: Object
+});
 
 const setRule = (item: any, desc: string) => {
   if (formConfig.value.type === 'view') return [];
