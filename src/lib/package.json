@@ -1,6 +1,6 @@
 {
   "name": "zzlhpdk-ui",
-  "version": "0.0.44",
+  "version": "0.0.46",
   "description": "基于element-ui二次封装的组件库",
   "main": "index.js",
   "scripts": {
