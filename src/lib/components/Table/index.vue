@@ -10,14 +10,9 @@
       <zzForm
         v-if="tableConfig.showSearch && !collapse"
         v-model="searchFormData"
-        :formFields="{
-          ...searchFields,
-          custom: {
-            type: 'custom'
-          }
-        }"
+        :formFields="formFields"
         :formConfig="searchConfig">
-        <template #custom>
+        <template #buttonSlot>
           <span class="search-buttons">
             <el-button
               :icon="Search"
@@ -38,6 +33,9 @@
             >
           </span>
         </template>
+        <slot name="searchSlot">
+          
+        </slot>
       </zzForm>
     </transition>
     <!--  表格头部组件 -->
@@ -120,7 +118,7 @@
 </template>
 <script setup lang="ts">
 import zzForm from '../Form/index.vue';
-import { ref, onMounted, toRefs, getCurrentInstance } from 'vue';
+import { ref, onMounted, toRefs, getCurrentInstance, computed } from 'vue';
 import {
   Search,
   RefreshLeft,
@@ -178,6 +176,15 @@ const { tableColumns, tableConfig, searchFields, searchConfig } = toRefs(props);
 const searchFormData = defineModel('modelValue', {
   default: () => ({}),
   type: Object
+});
+const formFields = computed(() => {
+  return {
+    ...searchFields.value,
+    custom: {
+      type: 'custom',
+      slot: 'buttonSlot'
+    }
+  };
 });
 const total = ref(0);
 const pageInfo = ref({ current: 1, size: 10 });

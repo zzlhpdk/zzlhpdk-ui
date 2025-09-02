@@ -4,6 +4,9 @@
     :formConfig="formConfig"
     :formFields="formFields"
     ref="formRef">
+    <template #customSlot>
+      <el-input v-model="formData.custom" />
+    </template>
   </zz-form>
   <div class="button">
     <el-button type="primary" @click="handleEhco">表单回显</el-button>
@@ -31,7 +34,8 @@ const formData = ref({
   like: ['swim', 'run'],
   work: ['1', '1-1', '1-1-1'],
   address: 'city',
-  remark: '备注'
+  remark: '备注',
+  custom: '自定义'
 });
 const formFields = ref({
   name: {
@@ -118,6 +122,11 @@ const formFields = ref({
     style: {
       width: '100%'
     }
+  },
+  custom: {
+    type: 'custom',
+    label: '自定义',
+    slot: 'customSlot'
   }
 });
 const formRef = ref();
@@ -148,7 +157,8 @@ const handleEhco = () => {
       like: ['run', 'swim'],
       work: ['1', '1-1', '1-1-1'],
       address: 'city',
-      remark: '1212'
+      remark: '1212',
+      custom: '自定义111'
     };
     formData.value = data;
   }, 100);

@@ -160,8 +160,8 @@
           >
         </el-radio-group>
       </template>
-      <template v-if="item.type === 'custom'">
-        <slot name="custom"></slot>
+      <template v-if="item.type === 'custom' && item.slot">
+        <slot :name="item.slot" :modelValue="form[key]"> </slot>
       </template>
     </el-form-item>
     <!-- 文件上传 -->

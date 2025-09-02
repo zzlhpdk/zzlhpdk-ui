@@ -10,8 +10,8 @@
       :formConfig="mergeFormConfig"
       :formFields="formFields"
       v-model="form">
-      <template #custom>
-        <slot name="custom"></slot>
+      <template v-for="(_, name) in $slots" #[name]="scope">
+        <slot :name="name" v-bind="scope" />
       </template>
     </FormItem>
   </el-form>
