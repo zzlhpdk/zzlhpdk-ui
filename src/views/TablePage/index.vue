@@ -12,6 +12,11 @@
     <template #nameSlot>
       <el-input placeholder="请输入姓名"></el-input>
     </template>
+    <template #customSlot>
+      <el-input
+        v-model="searchformData.customField"
+        placeholder="请输入自定义"></el-input>
+    </template>
   </zz-table>
 </template>
 <script setup lang="ts">
@@ -27,7 +32,7 @@ const searchConfig = computed(() => {
   };
 });
 
-const searchformData = ref({});
+const searchformData: any = ref({});
 const searchFields = {
   name: {
     type: 'input',
@@ -50,6 +55,11 @@ const searchFields = {
       { label: '男', value: 1 },
       { label: '女', value: 2 }
     ]
+  },
+  customField: {
+    type: 'custom',
+    label: '自定义',
+    slot: 'customSlot'
   }
 };
 //表格配置

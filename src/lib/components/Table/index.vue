@@ -33,9 +33,10 @@
             >
           </span>
         </template>
-        <slot name="searchSlot">
-          
-        </slot>
+        <!-- 传递所有插槽 -->
+        <template v-for="(_, name) in $slots" #[name]="scope">
+          <slot :name="name" v-bind="scope" />
+        </template>
       </zzForm>
     </transition>
     <!--  表格头部组件 -->
@@ -125,7 +126,7 @@ import {
   ArrowUp,
   ArrowDown
 } from '@element-plus/icons-vue';
-import { deepClone } from '../../utils/func';
+import { deepClone, removeEmptyValues } from '../../utils/func';
 
 defineOptions({
   name: 'zz-table'
@@ -180,9 +181,10 @@ const searchFormData = defineModel('modelValue', {
 const formFields = computed(() => {
   return {
     ...searchFields.value,
-    custom: {
+    searchButtons: {
       type: 'custom',
-      slot: 'buttonSlot'
+      slot: 'buttonSlot',
+      remove: !tableConfig.value.showSearch
     }
   };
 });
@@ -215,6 +217,7 @@ const getTableData = async () => {
     ...pageInfo.value,
     ...searchFormData.value
   };
+  params = removeEmptyValues(params);
   // 请求拦截逻辑
   if (typeof tableConfig.value.beforeRequest === 'function') {
     params = await tableConfig.value.beforeRequest(params);

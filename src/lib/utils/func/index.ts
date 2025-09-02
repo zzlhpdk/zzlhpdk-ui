@@ -32,4 +32,48 @@ const deepClone = (obj, hash = new WeakMap()) => {
   }
   return cloneObj;
 };
-export { getUUId, deepClone };
+//删除对象里值为 null  undefind  '' 的方法
+const removeEmptyValues = (obj: Record<string, any>): Record<string, any> => {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  const result: Record<string, any> = {};
+
+  for (const [key, value] of Object.entries(obj)) {
+    // 过滤掉 null、undefined、空字符串和 NaN
+    if (
+      value !== null &&
+      value !== undefined &&
+      value !== '' &&
+      !Number.isNaN(value)
+    ) {
+      // 如果是对象，递归处理
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        const cleanedValue = removeEmptyValues(value);
+        // 只有当递归处理后对象不为空时才保留
+        if (Object.keys(cleanedValue).length > 0) {
+          result[key] = cleanedValue;
+        }
+      } else if (Array.isArray(value)) {
+        // 处理数组，过滤掉空值和 NaN
+        const filteredArray = value.filter(
+          item =>
+            item !== null &&
+            item !== undefined &&
+            item !== '' &&
+            !Number.isNaN(item)
+        );
+        if (filteredArray.length > 0) {
+          result[key] = filteredArray;
+        }
+      } else {
+        result[key] = value;
+      }
+    }
+  }
+
+  return result;
+};
+
+export { getUUId, deepClone, removeEmptyValues };
